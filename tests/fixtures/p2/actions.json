@@ -1,0 +1,17 @@
+{
+  "schema_version": "0.1",
+  "source": "Explicit independent variations of normal.json; each is run separately.",
+  "spec_overrides": {"allocation": "fixed", "weights": {"SYN-A": "0.5"}, "fee_rate": "0", "rebalance_every": 20},
+  "split": {
+    "price_after": "50",
+    "action": {"action_id": "split-a", "asset_id": "SYN-A", "kind": "split", "effective_at": "2024-01-04T14:30:00Z", "available_at": "2024-01-03T12:00:00Z", "source": "synthetic://p2/split-a", "ratio": "2"}
+  },
+  "dividend": {
+    "price_after": "98",
+    "action": {"action_id": "dividend-a", "asset_id": "SYN-A", "kind": "dividend", "effective_at": "2024-01-04T14:30:00Z", "available_at": "2024-01-03T12:00:00Z", "source": "synthetic://p2/dividend-a", "cash_per_share": "2", "pay_at": "2024-01-08T14:30:00Z"}
+  },
+  "delist": {
+    "price_after": null,
+    "action": {"action_id": "delist-a", "asset_id": "SYN-A", "kind": "delist", "effective_at": "2024-01-04T14:30:00Z", "available_at": "2024-01-03T12:00:00Z", "source": "synthetic://p2/delist-a-explicit-settlement", "cash_per_share": "20", "pay_at": "2024-01-08T14:30:00Z"}
+  }
+}

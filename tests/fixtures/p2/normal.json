@@ -1,0 +1,50 @@
+{
+  "manifest": {
+    "schema_version": "0.1", "dataset_id": "p2-synthetic-normal", "kind": "synthetic",
+    "provider": "independent-hand-authored-p2", "market": "synthetic-daily", "currency": "USD",
+    "calendar_id": "explicit-five-session-calendar", "collected_at": "2024-01-10T22:00:00Z",
+    "raw_snapshot_id": "p2-normal-raw-v1", "normalized_snapshot_id": "p2-normal-v1",
+    "rights": "Synthetic test data only.", "universe_id": "p2-synthetic-universe",
+    "coverage_start": "2024-01-02", "coverage_end": "2024-01-08",
+    "evidence": {
+      "price_versions": "synthetic://p2/normal/observations",
+      "universe": "synthetic://p2/normal/universe_events",
+      "corporate_actions": "synthetic://p2/normal/explicit-empty-actions",
+      "delist_settlement": "synthetic://p2/normal/no-delist"
+    }
+  },
+  "sessions": [
+    {"session_date": "2024-01-02", "open_at": "2024-01-02T14:30:00Z", "close_at": "2024-01-02T21:00:00Z"},
+    {"session_date": "2024-01-03", "open_at": "2024-01-03T14:30:00Z", "close_at": "2024-01-03T21:00:00Z"},
+    {"session_date": "2024-01-04", "open_at": "2024-01-04T14:30:00Z", "close_at": "2024-01-04T21:00:00Z"},
+    {"session_date": "2024-01-05", "open_at": "2024-01-05T14:30:00Z", "close_at": "2024-01-05T21:00:00Z"},
+    {"session_date": "2024-01-08", "open_at": "2024-01-08T14:30:00Z", "close_at": "2024-01-08T21:00:00Z"}
+  ],
+  "observations": [
+    {"asset_id": "SYN-A", "field": "open", "observed_at": "2024-01-02T14:30:00Z", "available_at": "2024-01-02T14:30:00Z", "revision": 1, "value": "100", "adjustment": "raw"},
+    {"asset_id": "SYN-A", "field": "close", "observed_at": "2024-01-02T21:00:00Z", "available_at": "2024-01-02T21:00:00Z", "revision": 1, "value": "100", "adjustment": "raw"},
+    {"asset_id": "SYN-B", "field": "open", "observed_at": "2024-01-02T14:30:00Z", "available_at": "2024-01-02T14:30:00Z", "revision": 1, "value": "100", "adjustment": "raw"},
+    {"asset_id": "SYN-B", "field": "close", "observed_at": "2024-01-02T21:00:00Z", "available_at": "2024-01-02T21:00:00Z", "revision": 1, "value": "100", "adjustment": "raw"},
+    {"asset_id": "SYN-A", "field": "open", "observed_at": "2024-01-03T14:30:00Z", "available_at": "2024-01-03T14:30:00Z", "revision": 1, "value": "100", "adjustment": "raw"},
+    {"asset_id": "SYN-A", "field": "close", "observed_at": "2024-01-03T21:00:00Z", "available_at": "2024-01-03T21:00:00Z", "revision": 1, "value": "100", "adjustment": "raw"},
+    {"asset_id": "SYN-B", "field": "open", "observed_at": "2024-01-03T14:30:00Z", "available_at": "2024-01-03T14:30:00Z", "revision": 1, "value": "100", "adjustment": "raw"},
+    {"asset_id": "SYN-B", "field": "close", "observed_at": "2024-01-03T21:00:00Z", "available_at": "2024-01-03T21:00:00Z", "revision": 1, "value": "100", "adjustment": "raw"},
+    {"asset_id": "SYN-A", "field": "open", "observed_at": "2024-01-04T14:30:00Z", "available_at": "2024-01-04T14:30:00Z", "revision": 1, "value": "100", "adjustment": "raw"},
+    {"asset_id": "SYN-A", "field": "close", "observed_at": "2024-01-04T21:00:00Z", "available_at": "2024-01-04T21:00:00Z", "revision": 1, "value": "100", "adjustment": "raw"},
+    {"asset_id": "SYN-B", "field": "open", "observed_at": "2024-01-04T14:30:00Z", "available_at": "2024-01-04T14:30:00Z", "revision": 1, "value": "100", "adjustment": "raw"},
+    {"asset_id": "SYN-B", "field": "close", "observed_at": "2024-01-04T21:00:00Z", "available_at": "2024-01-04T21:00:00Z", "revision": 1, "value": "100", "adjustment": "raw"},
+    {"asset_id": "SYN-A", "field": "open", "observed_at": "2024-01-05T14:30:00Z", "available_at": "2024-01-05T14:30:00Z", "revision": 1, "value": "100", "adjustment": "raw"},
+    {"asset_id": "SYN-A", "field": "close", "observed_at": "2024-01-05T21:00:00Z", "available_at": "2024-01-05T21:00:00Z", "revision": 1, "value": "100", "adjustment": "raw"},
+    {"asset_id": "SYN-B", "field": "open", "observed_at": "2024-01-05T14:30:00Z", "available_at": "2024-01-05T14:30:00Z", "revision": 1, "value": "100", "adjustment": "raw"},
+    {"asset_id": "SYN-B", "field": "close", "observed_at": "2024-01-05T21:00:00Z", "available_at": "2024-01-05T21:00:00Z", "revision": 1, "value": "100", "adjustment": "raw"},
+    {"asset_id": "SYN-A", "field": "open", "observed_at": "2024-01-08T14:30:00Z", "available_at": "2024-01-08T14:30:00Z", "revision": 1, "value": "100", "adjustment": "raw"},
+    {"asset_id": "SYN-A", "field": "close", "observed_at": "2024-01-08T21:00:00Z", "available_at": "2024-01-08T21:00:00Z", "revision": 1, "value": "100", "adjustment": "raw"},
+    {"asset_id": "SYN-B", "field": "open", "observed_at": "2024-01-08T14:30:00Z", "available_at": "2024-01-08T14:30:00Z", "revision": 1, "value": "100", "adjustment": "raw"},
+    {"asset_id": "SYN-B", "field": "close", "observed_at": "2024-01-08T21:00:00Z", "available_at": "2024-01-08T21:00:00Z", "revision": 1, "value": "100", "adjustment": "raw"}
+  ],
+  "universe_events": [
+    {"asset_id": "SYN-A", "effective_at": "2024-01-02T14:30:00Z", "available_at": "2024-01-02T14:30:00Z", "action": "enter", "source": "synthetic://p2/normal/a-enter"},
+    {"asset_id": "SYN-B", "effective_at": "2024-01-02T14:30:00Z", "available_at": "2024-01-02T14:30:00Z", "action": "enter", "source": "synthetic://p2/normal/b-enter"}
+  ],
+  "corporate_actions": []
+}

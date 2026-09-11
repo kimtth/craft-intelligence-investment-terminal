@@ -1,0 +1,29 @@
+# Python-generated files
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+
+# Virtual environments
+.venv
+.itt/
+output/
+.env
+.env.*
+node_modules/
+ref-app/
+.cache/
+.pytest_cache/
+.ruff_cache/
+research-runs/
+*.log
+
+# Root Markdown stays local, except README. Nested docs remain eligible for tracking.
+/*.[mM][dD]
+!/[rR][eE][aA][dD][mM][eE].[mM][dD]
+/video
+
+# Optional workstation tools only; tests/ui and its helpers remain shared.
+/tools/local/

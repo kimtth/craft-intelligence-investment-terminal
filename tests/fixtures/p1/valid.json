@@ -1,0 +1,68 @@
+{
+  "manifest": {
+    "schema_version": "0.1",
+    "dataset_id": "p1-synthetic-five-sessions",
+    "kind": "synthetic",
+    "provider": "hand-authored-contract-fixture",
+    "market": "synthetic-daily",
+    "currency": "USD",
+    "calendar_id": "explicit-five-session-calendar",
+    "collected_at": "2024-01-10T22:00:00Z",
+    "raw_snapshot_id": "p1-raw-v1",
+    "normalized_snapshot_id": "p1-normalized-v1",
+    "rights": "Synthetic test data; no real market-data rights asserted.",
+    "universe_id": "p1-synthetic-universe",
+    "coverage_start": "2024-01-02",
+    "coverage_end": "2024-01-08",
+    "evidence": {
+      "price_versions": "synthetic://p1/valid/observations",
+      "universe": "synthetic://p1/valid/universe_events",
+      "corporate_actions": "synthetic://p1/valid/corporate_actions",
+      "delist_settlement": "synthetic://p1/valid/corporate_actions/delist-b"
+    }
+  },
+  "sessions": [
+    {"session_date": "2024-01-02", "open_at": "2024-01-02T14:30:00Z", "close_at": "2024-01-02T21:00:00Z"},
+    {"session_date": "2024-01-03", "open_at": "2024-01-03T14:30:00Z", "close_at": "2024-01-03T21:00:00Z"},
+    {"session_date": "2024-01-04", "open_at": "2024-01-04T14:30:00Z", "close_at": "2024-01-04T21:00:00Z"},
+    {"session_date": "2024-01-05", "open_at": "2024-01-05T14:30:00Z", "close_at": "2024-01-05T21:00:00Z"},
+    {"session_date": "2024-01-08", "open_at": "2024-01-08T14:30:00Z", "close_at": "2024-01-08T21:00:00Z"}
+  ],
+  "observations": [
+    {"asset_id": "SYN-A", "field": "open", "observed_at": "2024-01-02T14:30:00Z", "available_at": "2024-01-02T14:30:00Z", "revision": 1, "value": "100", "adjustment": "raw"},
+    {"asset_id": "SYN-A", "field": "close", "observed_at": "2024-01-02T21:00:00Z", "available_at": "2024-01-02T21:00:00Z", "revision": 1, "value": "100", "adjustment": "raw"},
+    {"asset_id": "SYN-B", "field": "open", "observed_at": "2024-01-02T14:30:00Z", "available_at": "2024-01-02T14:30:00Z", "revision": 1, "value": "100", "adjustment": "raw"},
+    {"asset_id": "SYN-B", "field": "close", "observed_at": "2024-01-02T21:00:00Z", "available_at": "2024-01-03T20:00:00Z", "revision": 1, "value": "100", "adjustment": "raw"},
+    {"asset_id": "SYN-A", "field": "open", "observed_at": "2024-01-03T14:30:00Z", "available_at": "2024-01-03T14:30:00Z", "revision": 1, "value": "100", "adjustment": "raw"},
+    {"asset_id": "SYN-A", "field": "close", "observed_at": "2024-01-03T21:00:00Z", "available_at": "2024-01-03T21:00:00Z", "revision": 1, "value": "100", "adjustment": "raw"},
+    {"asset_id": "SYN-B", "field": "open", "observed_at": "2024-01-03T14:30:00Z", "available_at": "2024-01-03T14:30:00Z", "revision": 1, "value": "100", "adjustment": "raw"},
+    {"asset_id": "SYN-B", "field": "close", "observed_at": "2024-01-03T21:00:00Z", "available_at": "2024-01-03T21:00:00Z", "revision": 1, "value": "100", "adjustment": "raw"},
+    {"asset_id": "SYN-A", "field": "open", "observed_at": "2024-01-04T14:30:00Z", "available_at": "2024-01-04T14:30:00Z", "revision": 1, "value": "50", "adjustment": "raw"},
+    {"asset_id": "SYN-A", "field": "close", "observed_at": "2024-01-04T21:00:00Z", "available_at": "2024-01-04T21:00:00Z", "revision": 1, "value": "50", "adjustment": "raw"},
+    {"asset_id": "SYN-B", "field": "open", "observed_at": "2024-01-04T14:30:00Z", "available_at": "2024-01-04T14:30:00Z", "revision": 1, "value": "100", "adjustment": "raw"},
+    {"asset_id": "SYN-B", "field": "close", "observed_at": "2024-01-04T21:00:00Z", "available_at": "2024-01-04T21:00:00Z", "revision": 1, "value": "100", "adjustment": "raw"},
+    {"asset_id": "SYN-A", "field": "open", "observed_at": "2024-01-05T14:30:00Z", "available_at": "2024-01-05T14:30:00Z", "revision": 1, "value": "48", "adjustment": "raw"},
+    {"asset_id": "SYN-A", "field": "close", "observed_at": "2024-01-05T21:00:00Z", "available_at": "2024-01-05T21:00:00Z", "revision": 1, "value": "48", "adjustment": "raw"},
+    {"asset_id": "SYN-B", "field": "open", "observed_at": "2024-01-05T14:30:00Z", "available_at": "2024-01-05T14:30:00Z", "revision": 1, "value": "100", "adjustment": "raw"},
+    {"asset_id": "SYN-B", "field": "close", "observed_at": "2024-01-05T21:00:00Z", "available_at": "2024-01-05T21:00:00Z", "revision": 1, "value": "100", "adjustment": "raw"},
+    {"asset_id": "SYN-C", "field": "open", "observed_at": "2024-01-05T14:30:00Z", "available_at": "2024-01-05T14:30:00Z", "revision": 1, "value": "200", "adjustment": "raw"},
+    {"asset_id": "SYN-C", "field": "close", "observed_at": "2024-01-05T21:00:00Z", "available_at": "2024-01-05T21:00:00Z", "revision": 1, "value": "200", "adjustment": "raw"},
+    {"asset_id": "SYN-A", "field": "open", "observed_at": "2024-01-08T14:30:00Z", "available_at": "2024-01-08T14:30:00Z", "revision": 1, "value": "48", "adjustment": "raw"},
+    {"asset_id": "SYN-A", "field": "close", "observed_at": "2024-01-08T21:00:00Z", "available_at": "2024-01-08T21:00:00Z", "revision": 1, "value": "48", "adjustment": "raw"},
+    {"asset_id": "SYN-C", "field": "open", "observed_at": "2024-01-08T14:30:00Z", "available_at": "2024-01-08T14:30:00Z", "revision": 1, "value": "200", "adjustment": "raw"},
+    {"asset_id": "SYN-C", "field": "close", "observed_at": "2024-01-08T21:00:00Z", "available_at": "2024-01-08T21:00:00Z", "revision": 1, "value": "200", "adjustment": "raw"},
+    {"asset_id": "SYN-A", "field": "close", "observed_at": "2024-01-02T21:00:00Z", "available_at": "2024-01-05T21:05:00Z", "revision": 2, "value": "999", "adjustment": "raw"}
+  ],
+  "universe_events": [
+    {"asset_id": "SYN-A", "effective_at": "2024-01-02T14:30:00Z", "available_at": "2024-01-01T12:00:00Z", "action": "enter", "source": "synthetic://p1/universe/a-enter"},
+    {"asset_id": "SYN-B", "effective_at": "2024-01-02T14:30:00Z", "available_at": "2024-01-01T12:00:00Z", "action": "enter", "source": "synthetic://p1/universe/b-enter"},
+    {"asset_id": "SYN-A", "effective_at": "2024-01-04T14:30:00Z", "available_at": "2024-01-03T22:00:00Z", "action": "exit", "source": "synthetic://p1/universe/a-exit"},
+    {"asset_id": "SYN-C", "effective_at": "2024-01-05T14:30:00Z", "available_at": "2024-01-05T14:30:00Z", "action": "enter", "source": "synthetic://p1/universe/c-enter"},
+    {"asset_id": "SYN-B", "effective_at": "2024-01-08T14:30:00Z", "available_at": "2024-01-05T22:00:00Z", "action": "exit", "source": "synthetic://p1/universe/b-exit"}
+  ],
+  "corporate_actions": [
+    {"action_id": "split-a", "asset_id": "SYN-A", "kind": "split", "effective_at": "2024-01-04T14:30:00Z", "available_at": "2024-01-03T12:00:00Z", "source": "synthetic://p1/actions/split-a", "ratio": "2"},
+    {"action_id": "dividend-a", "asset_id": "SYN-A", "kind": "dividend", "effective_at": "2024-01-05T14:30:00Z", "available_at": "2024-01-04T12:00:00Z", "source": "synthetic://p1/actions/dividend-a", "cash_per_share": "2", "pay_at": "2024-01-08T14:30:00Z"},
+    {"action_id": "delist-b", "asset_id": "SYN-B", "kind": "delist", "effective_at": "2024-01-08T14:30:00Z", "available_at": "2024-01-05T12:00:00Z", "source": "synthetic://p1/settlement/delist-b", "cash_per_share": "20", "pay_at": "2024-01-10T14:30:00Z"}
+  ]
+}

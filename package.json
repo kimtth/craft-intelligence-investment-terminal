@@ -1,0 +1,15 @@
+{
+  "name": "intelligent-trading-terminal",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@10.32.0",
+  "scripts": {
+    "start": "node ui/node_modules/electron/cli.js ui/desktop.js",
+    "start:web": "node ui/gui-server.js",
+    "start:tui": "node ui/index.js",
+    "probe": "node ui/probe.js",
+    "check": "node --check ui/probe.js && node --check ui/index.js && node --check ui/backend.js",
+    "test": "node --test tests/ui/*.test.js"
+  }
+}

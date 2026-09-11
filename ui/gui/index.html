@@ -1,0 +1,340 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="referrer" content="no-referrer">
+  <title>Intelligent Trading Terminal</title>
+  <link rel="stylesheet" href="./style.css">
+  <link rel="stylesheet" href="./swarm.css">
+  <link rel="stylesheet" href="./guru.css">
+  <script src="/vendor/marked.js" defer></script>
+  <script src="/vendor/purify.js" defer></script>
+  <script src="./swarm.js" defer></script>
+  <script src="./guru.js" defer></script>
+  <script src="./research.js" defer></script>
+  <!-- Deferred classic research initializes before the following non-async module. -->
+  <script src="./app.js" type="module"></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to workspace</a>
+  <header class="topbar">
+    <a class="brand" href="#main" aria-label="Intelligent Trading Terminal workspace">
+      <strong>ITT</strong><span class="brand-label">Research terminal</span>
+    </a>
+    <label class="search-field"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10" cy="10" r="6"/><path d="m15 15 5 5"/></svg><input id="watch-search" type="search" aria-label="Filter watchlist" placeholder="Filter ticker or instrument name" title="Literal text filter of the watchlist; not natural-language search" autocomplete="off" spellcheck="false"><kbd>/</kbd></label>
+    <nav class="top-navigation" aria-label="Workspace navigation">
+      <button class="nav-button active" id="nav-markets" aria-current="page" data-ui-icon="markets"><span>Markets</span></button>
+      <button class="nav-button" id="nav-backtest" aria-controls="backtest-workspace" data-ui-icon="backtest"><span>Backtest</span></button>
+      <button class="nav-button" id="nav-research" aria-controls="research-workspace" data-ui-icon="research"><span>Research</span></button>
+      <button class="nav-button" id="nav-swarm" aria-controls="swarm-view" data-ui-icon="swarm"><span>Quant Swarm</span></button>
+    </nav>
+    <div class="actions" id="market-actions">
+      <button id="fetch-market" class="button primary" aria-label="Manage assets and download market data" data-ui-icon="fetch" data-open-assets><span>Data</span></button>
+      <button id="verify-market" class="button secondary" aria-label="Verify saved data" title="Verify saved data (R)" data-ui-icon="verify"><span>Verify</span></button>
+    </div>
+    <button class="icon-button" id="source-top" aria-label="Open source provenance" title="Source provenance"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3 8 4v5c0 5-8 9-8 9s-8-4-8-9V7z"/><path d="m8 12 3 3 5-6"/></svg></button>
+    <button class="icon-button" id="nav-settings" aria-label="Settings" title="Settings" aria-haspopup="dialog" aria-controls="settings-dialog"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 17h16"/><circle cx="9" cy="7" r="3"/><circle cx="15" cy="17" r="3"/></svg></button>
+  </header>
+  <div class="filter-strip" aria-label="Content scope"><span id="workspace-location">Markets / SPY</span><span id="scope-provider">Yahoo Finance</span><span id="scope-frequency">Daily bars · saved coverage</span><span id="scope-currency">USD</span><span id="scope-mode" class="filter-local">Local snapshot · read-only</span></div>
+
+  <div class="app-shell">
+    <nav class="rail" aria-label="Workspace shortcuts">
+      <button class="rail-button active" id="rail-markets" aria-label="Markets" aria-current="page" title="Markets"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 3v18h18M6 15l4-5 4 3 6-8"/></svg></button>
+      <button class="rail-button" id="rail-sources" aria-label="Assets" title="Assets · configure and download market data" aria-controls="assets-workspace"><svg viewBox="0 0 24 24" aria-hidden="true"><ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v7c0 4 16 4 16 0V5M4 12v7c0 4 16 4 16 0v-7"/></svg></button>
+      <span class="rail-bottom" title="Real saved market data; orders unavailable">ITT<span>LOCAL</span></span>
+    </nav>
+
+    <main id="main" tabindex="-1">
+      <details class="workspace-why" data-testid="workspace-why"><summary>Why this workspace? <span>Inspect prices. Define criteria. Review simulated performance.</span></summary><ul><li><strong>Inspect real market data:</strong> Yahoo daily OHLCV records and indicators describe saved sessions, not live prices.</li><li><strong>Check the evidence:</strong> select a date to inspect exact archived values and source hashes. <button id="why-evidence" class="text-button" type="button" aria-controls="selected-evidence">Open evidence</button></li><li><strong>Ask a bounded question:</strong> explicit Analyze sends selected data and your question to Copilot. <button id="why-copilot" class="text-button" type="button" aria-controls="copilot-panel">Ask Copilot</button></li><li><strong>Price-return simulation:</strong> user criteria → backend signals → next-open backtest → performance plots. Not historical point-in-time proof or dividend total return.</li></ul></details>
+      <nav id="research-tabs" class="research-tabs" role="tablist" aria-label="Research views" hidden>
+        <button id="research-tab-correlation" role="tab" aria-selected="true" aria-controls="research-correlation" data-research-view="correlation">Correlation</button>
+        <button id="research-tab-trigger" role="tab" aria-selected="false" tabindex="-1" aria-controls="research-trigger" data-research-view="trigger">Event studies</button>
+        <button id="research-tab-guru" role="tab" aria-selected="false" tabindex="-1" aria-controls="research-guru" data-research-view="guru">Guru</button>
+      </nav>
+      <section id="assets-workspace" class="assets-workspace" hidden aria-labelledby="assets-title">
+        <h1 id="assets-title" tabindex="-1">Assets</h1>
+        <p>Manage one saved asset universe shared by Markets, Backtest, Correlation and Event studies. Static and dynamic allocations can use any of the 1–10 saved assets.</p>
+        <section class="research-data" aria-label="Market data download">
+          <form id="research-fetch-form" class="research-controls" novalidate><label for="research-symbols">Selected assets · 1–10 Yahoo symbols, comma-separated<input id="research-symbols" value="SPY, QQQ, IWM, MSFT" placeholder="For example: SPY, QQQ, IWM, MSFT" autocomplete="off" spellcheck="false" required aria-describedby="assets-download-help"></label><label for="assets-start">Start date<input id="assets-start" type="date" min="0001-01-01" max="9999-12-30" required aria-describedby="assets-download-help"></label><label for="assets-end">End date<input id="assets-end" type="date" min="0001-01-01" max="9999-12-30" required aria-describedby="assets-download-help"></label><button id="research-fetch" class="button primary" type="submit">Download market data</button><button id="assets-verify" class="button secondary" type="button">Verify saved data</button></form>
+          <p id="assets-download-help" class="muted">Both dates are inclusive. Defaults to the last 5 calendar years through today. Downloads Yahoo daily bars in USD only; full coverage is not guaranteed and may differ by asset. Holidays, listing dates and provider limits can shorten coverage; the latest bar may be incomplete. A download creates a new active archive with only the entered assets, not a merge; previous archives are preserved. No substitute assets or automatic downloads.</p>
+          <p id="assets-requested" class="muted" aria-live="polite"></p>
+          <p id="research-source" role="status" aria-live="polite">Saved data not loaded.</p><div id="assets-error" class="error-banner" role="alert" hidden></div>
+        </section>
+        <h2>Saved assets</h2><div id="assets-table" class="research-table"></div>
+        <p class="muted">Verification checks saved manifest and raw bytes, not provider authenticity, historical availability or an external audit. Guru uses a separate reference feed; Quant Swarm is a concept demo.</p>
+      </section>
+      <section id="backtest-workspace" hidden aria-labelledby="backtest-title">
+        <section id="backtest-panel" class="backtest-panel" aria-labelledby="backtest-title" data-testid="backtest-panel">
+          <div class="panel-heading"><h1 id="backtest-title" tabindex="-1">Backtest</h1><span class="muted">1 Describe → 2 Review rules &amp; settings → 3 Run</span></div>
+          <div id="backtest-mode-tabs" class="research-tabs" role="tablist" aria-label="Backtest modes">
+            <button id="backtest-tab-single" type="button" role="tab" aria-selected="true" aria-controls="backtest-form" data-backtest-mode="single">Single asset</button>
+            <button id="backtest-tab-portfolio" type="button" role="tab" aria-selected="false" tabindex="-1" aria-controls="backtest-form" data-backtest-mode="portfolio">Static allocation</button>
+            <button id="backtest-tab-dynamic" type="button" role="tab" aria-selected="false" tabindex="-1" aria-controls="backtest-form" data-backtest-mode="dynamic">Dynamic allocation</button>
+          </div>
+          <p id="backtest-mode-note" class="backtest-note">Price-return simulation, not historical point-in-time verification or dividend total return. No real orders.</p>
+          <p class="backtest-note">All modes use the shared saved universe. <button class="text-button" id="backtest-open-assets" type="button" data-open-assets>Manage assets / download market data</button></p>
+          <div class="rule-source-controls" role="group" aria-label="Strategy definition source">
+            <button id="criteria-source-natural" type="button" class="button secondary" aria-pressed="true">Describe a strategy</button>
+            <button id="criteria-source-manual" type="button" class="button secondary" aria-pressed="false">Build rules manually</button>
+          </div>
+          <section id="criteria-natural" class="criteria-generation" aria-labelledby="criteria-natural-title">
+            <h2 id="criteria-natural-title">1 · Describe your buy and sell rules</h2>
+            <label for="criteria-question">Strategy description</label><textarea id="criteria-question" rows="3" maxlength="4000" placeholder="Buy when SMA20 crosses above SMA50; sell when it crosses below." aria-describedby="criteria-generation-help criteria-generation-status"></textarea>
+            <p id="criteria-generation-help" class="backtest-note">Generate sends your description and the selected asset’s saved public data through the pinned date to Copilot. It proposes bounded rules, not code or proven performance. Allocation weights and schedule remain yours. Nothing runs automatically.</p>
+            <button id="criteria-generate" class="button secondary" type="button" disabled>Generate rules</button>
+            <p id="criteria-generation-status" role="status" aria-live="polite">Describe your rules, or build them manually without AI.</p>
+            <details><summary>Model explanation · unverified provider text</summary><pre id="criteria-explanation" hidden></pre></details>
+          </section>
+          <section id="criteria-summary" class="criteria-summary" aria-live="polite" hidden><h2>2 · Review the active rules</h2><p id="criteria-source-status"></p><dl id="criteria-summary-rules"></dl></section>
+          <form id="backtest-form" role="tabpanel" aria-labelledby="backtest-tab-single">
+            <h2>Simulation settings</h2>
+            <div class="criteria-fields">
+              <label hidden>Simulation mode<select id="backtest-mode"><option value="single">Single asset</option><option value="portfolio">Static allocation</option><option value="dynamic">Dynamic allocation</option></select></label>
+              <label id="backtest-symbol-field">Saved asset<select id="backtest-symbol" required></select></label>
+              <label class="criteria-wide">Saved archive ID · fixed<input id="backtest-archive" readonly></label>
+              <label>Start date · saved session<select id="backtest-start" required></select></label>
+              <label>End date · saved session<select id="backtest-end" required></select></label>
+              <label>Initial cash<input id="backtest-cash" value="10000" inputmode="decimal" required></label>
+              <label>Fee (bps)<input id="backtest-fee" value="10" inputmode="decimal" required></label>
+              <label>Slippage (bps)<input id="backtest-slippage" value="5" inputmode="decimal" required></label>
+            </div>
+            <fieldset id="portfolio-fields" class="criteria-rule portfolio-fields" hidden disabled>
+              <legend>Fixed target weights and rebalance schedule</legend>
+              <div id="portfolio-weights" class="criteria-wide research-controls"></div>
+              <label>Weight helper<select id="portfolio-preset"><option value="equal">Equal weights across saved assets</option><option value="classic">Optional example only: SPY 50% / QQQ 30% / IWM 20%</option></select></label><button id="portfolio-apply-preset" class="button secondary" type="button">Apply preset</button>
+              <label>Rebalance basis<select id="portfolio-calendar"><option value="sessions">Saved sessions</option><option value="monthly">Monthly</option><option value="quarterly">Quarterly</option></select></label>
+              <label>Rebalance every N saved sessions<input id="portfolio-rebalance" type="number" value="5" min="1" max="100000" step="1" required></label>
+              <div id="dynamic-fields" class="criteria-wide research-controls" hidden><label>Momentum lookback · sessions<input id="dynamic-lookback" type="number" min="1" max="252" value="63"></label><label>Top N assets<input id="dynamic-top-n" type="number" min="1" max="10" value="1"></label><label>Minimum return · 0.05 = 5%<input id="dynamic-min-return" value="0" inputmode="decimal"></label></div>
+              <p class="backtest-note criteria-wide">A weight of 0.5 means 50%. The sum must be greater than 0 and at most 1; the remainder stays in cash. Zero-weight assets are excluded. Assets must share saved sessions and USD currency; no substitutes, date intersections or date shifts. Date choices follow the first selected asset. Momentum ranks trailing returns; it is not BAA or an optimized strategy. Review the execution contract in the result.</p>
+            </fieldset>
+            <p class="backtest-note">1 bp = 0.01%. The default window is the latest 126 saved bars. Strategy and buy-and-hold benchmark share dates and costs; indicators use the full archive for warm-up.</p>
+            <details id="criteria-manual" hidden><summary>Manual rule editor · offline</summary>
+              <fieldset id="criteria-simple-fields" disabled>
+                <legend>Simple entry and exit rules</legend>
+                <fieldset class="criteria-rule"><legend>Buy · entry</legend><label>Left operand<select id="criteria-entry-left" required></select></label><label>Comparison<select id="criteria-entry-op"><option value="gt">Greater than (&gt;)</option><option value="lt">Less than (&lt;)</option><option value="crosses_above">Crosses above</option><option value="crosses_below">Crosses below</option></select></label><label>Right operand or number<input id="criteria-entry-right" list="criteria-operands" value="sma50" required></label></fieldset>
+                <fieldset class="criteria-rule"><legend>Sell · exit</legend><label>Left operand<select id="criteria-exit-left" required></select></label><label>Comparison<select id="criteria-exit-op"><option value="lt">Less than (&lt;)</option><option value="gt">Greater than (&gt;)</option><option value="crosses_above">Crosses above</option><option value="crosses_below">Crosses below</option></select></label><label>Right operand or number<input id="criteria-exit-right" list="criteria-operands" value="sma50" required></label></fieldset>
+                <datalist id="criteria-operands"></datalist>
+              </fieldset>
+              <details id="criteria-expert"><summary>Advanced · edit full criteria JSON</summary>
+                <section class="advanced-criteria"><label><input id="criteria-advanced-enabled" type="checkbox">Use JSON as the active manual rule source</label><button id="criteria-copy-simple" class="button secondary" type="button">Replace JSON with simple rules</button><label for="criteria-advanced-json">Editable criteria JSON · entry and exit only</label><textarea id="criteria-advanced-json" rows="12" spellcheck="false" disabled></textarea>
+                <p class="backtest-note">Nest rules with all required {all:[…]}, at least one {any:[…]}, or negation {not:…}. Comparisons {left,op,right} support gt / lt / gte / lte / eq / crosses_above / crosses_below. Operands are decimal strings, existing indicator names, {indicator:"sma"|"ema"|"rsi"|"roc"|"return"|"volatility",period:1..252,lag?:0..252}, {field:"close"|"open"|"high"|"low"|"volume",lag?:0..252} or {operation:"add"|"subtract"|"multiply"|"divide",left:operand,right:operand}. period is the calculation window; lag is the number of past observed sessions to shift. Only structured data is processed; no code is executed.</p>
+                </section>
+              </details>
+            </details>
+            <div class="criteria-actions"><button id="backtest-preview" class="button secondary" type="submit" data-ui-icon="review" disabled><span>Review rules &amp; settings</span></button><button id="backtest-run" class="button primary" type="button" data-ui-icon="run" disabled><span>Run backtest</span></button></div>
+          </form>
+          <section id="backtest-review" class="backtest-review" hidden><h2>3 · Confirm and run</h2><p id="backtest-review-summary"></p><p class="backtest-note">Run backtest sends this exact reviewed specification. Editing any input requires another review.</p><details><summary>Advanced · exact backend specification</summary><pre id="backtest-spec" tabindex="0"></pre></details></section>
+          <div id="backtest-error" class="error-banner" role="alert" hidden></div>
+          <p id="backtest-status" class="backtest-note" role="status" aria-live="polite">Describe a strategy or build rules manually, then review before running.</p>
+          <section id="backtest-results" hidden aria-label="Backtest performance">
+            <h3 id="backtest-result-title">Strategy and buy-and-hold benchmark</h3><p id="backtest-result-source" class="backtest-note"></p><button id="backtest-download" class="button secondary" type="button">Download result JSON</button>
+            <div class="backtest-table-wrap"><table aria-label="Backtest metrics"><thead><tr><th>Metric</th><th>Strategy</th><th>Benchmark</th></tr></thead><tbody id="backtest-metrics"></tbody></table></div>
+            <figure id="backtest-performance" aria-labelledby="backtest-performance-title">
+              <figcaption id="backtest-performance-title">Performance · CAGR &amp; MDD</figcaption>
+              <div id="backtest-performance-summary" aria-label="Final backend performance metrics"></div>
+              <p class="backtest-note">Final backend metrics above. CAGR: annualized return. MDD: maximum decline from a NAV peak. Below: daily NAV and daily drawdown, not CAGR or MDD curves.</p>
+              <svg id="backtest-equity" role="img" aria-label="Strategy and benchmark daily NAV and drawdown on a shared time axis"><g id="backtest-nav"></g><g id="backtest-drawdown"></g><g id="backtest-time-axis"></g></svg>
+              <p class="backtest-note">Solid: strategy · Dashed: benchmark. Drawdown starts from initial cash; missing points remain gaps.</p>
+              <p class="performance-series-notes"><span id="backtest-equity-note"></span> <span id="backtest-drawdown-note"></span></p>
+            </figure>
+            <details open><summary>Generated user-condition signals · exact backend reasons</summary>
+              <div class="result-controls"><label>Asset<select id="backtest-signal-symbol"></select></label><button id="backtest-signals-prev" type="button" class="button secondary">Previous</button><span id="backtest-signals-page" role="status"></span><button id="backtest-signals-next" type="button" class="button secondary">Next</button></div>
+              <p id="backtest-signal-note" class="backtest-note"></p>
+              <div class="backtest-table-wrap"><table aria-label="User criteria signals"><thead><tr><th>Signal day</th><th>Status / reason</th><th>Entry condition / values</th><th>Exit condition / values</th><th>Execution timing</th></tr></thead><tbody id="backtest-signals"></tbody></table></div>
+            </details>
+            <details open><summary>Fills · signal day versus fill date</summary>
+              <div class="result-controls"><button id="backtest-fills-prev" type="button" class="button secondary">Previous</button><span id="backtest-fills-page" role="status"></span><button id="backtest-fills-next" type="button" class="button secondary">Next</button></div>
+              <div class="backtest-table-wrap"><table aria-label="Backtest fills"><thead><tr><th>Book</th><th>Signal day</th><th>Fill date</th><th>Side</th><th>Units</th><th>Open</th><th>Fill price</th><th>Fee</th><th>Slippage cost</th><th>Symbol</th></tr></thead><tbody id="backtest-fills"></tbody></table></div>
+            </details>
+            <section id="portfolio-result-details" hidden aria-label="Portfolio allocation details">
+              <h3>Allocation decisions and holdings</h3>
+              <label class="result-book">Book<select id="portfolio-result-book"><option value="strategy">Strategy</option><option value="benchmark">Benchmark</option></select></label>
+              <details open><summary>Rebalance decisions · close-time targets → next-open fills</summary>
+                <p class="backtest-note">Targets are simulated integer quantities. Eligibility updates daily, but trades wait for the scheduled rebalance. Unavailable criteria preserve the asset's held quantity.</p>
+                <div class="result-controls"><button id="backtest-decisions-prev" type="button" class="button secondary">Previous</button><span id="backtest-decisions-page" role="status"></span><button id="backtest-decisions-next" type="button" class="button secondary">Next</button></div>
+                <div class="backtest-table-wrap"><table aria-label="Portfolio rebalance decisions"><thead><tr><th>Decision → fill</th><th>Asset</th><th>Eligible</th><th>Target units</th><th>Reason</th><th>Order outcome</th></tr></thead><tbody id="backtest-decisions"></tbody></table></div>
+              </details>
+              <details open><summary>Daily holdings · actual weights at close</summary>
+                <div class="result-controls"><label>Saved session<select id="portfolio-position-date"></select></label><span id="portfolio-position-summary" role="status"></span></div>
+                <div class="backtest-table-wrap"><table aria-label="Daily portfolio holdings"><thead><tr><th>Asset</th><th>Units</th><th>Market value</th><th>Actual weight</th><th>Target weight</th></tr></thead><tbody id="backtest-positions"></tbody></table></div>
+              </details>
+            </section>
+            <details><summary>Execution contract and limitations</summary><pre id="backtest-contract"></pre><ul id="backtest-limitations"></ul></details>
+          </section>
+        </section>
+        <section id="backtest-progress-panel" class="live-progress" hidden aria-label="Backend simulation progress">
+          <div class="research-controls"><strong id="backtest-progress-status" role="status" aria-live="polite">Waiting for backend progress</strong><button id="backtest-live-toggle" type="button" class="button secondary" aria-expanded="true" aria-controls="backtest-live-charts">Hide progress charts</button></div>
+          <div class="progress-counts" aria-live="off">
+            <span class="progress-phase"><strong id="backtest-strategy-label">Strategy</strong><span class="progress-count" aria-labelledby="backtest-strategy-label"><span id="backtest-strategy-completed">—</span> / <span id="backtest-strategy-total">—</span></span></span>
+            <span class="progress-phase"><strong id="backtest-benchmark-label">Benchmark</strong><span class="progress-count" aria-labelledby="backtest-benchmark-label"><span id="backtest-benchmark-completed">—</span> / <span id="backtest-benchmark-total">—</span></span></span>
+          </div>
+          <progress id="backtest-progress" max="1" value="0" aria-label="Completed strategy and benchmark sessions"></progress><p id="backtest-progress-detail"></p>
+          <div id="backtest-live-charts">
+            <figure>
+              <figcaption id="backtest-live-title">Backend progress · CAGR & MDD (%)</figcaption>
+              <div class="live-legend" aria-label="Progress series legend">
+                <span class="cagr strategy">CAGR · Strategy</span><span class="cagr benchmark">CAGR · Benchmark</span>
+                <span class="mdd strategy">MDD · Strategy</span><span class="mdd benchmark">MDD · Benchmark</span>
+              </div>
+              <svg id="backtest-live-performance" viewBox="0 0 600 180" role="img" aria-labelledby="backtest-live-title" aria-describedby="backtest-live-note"><g id="backtest-live-cagr"></g><g id="backtest-live-mdd"></g></svg>
+              <p id="backtest-live-note" class="muted">Backend values, not forecasts: CAGR is annualized return; MDD is the positive running maximum decline from a NAV peak, not daily drawdown. All four curves share one % axis without normalization; large early CAGR can flatten MDD. Unavailable values remain gaps. Received curves stay after completion.</p>
+            </figure>
+          </div>
+        </section>
+      </section>
+      <section id="research-workspace" class="research-workspace" hidden aria-label="Research views">
+        <section id="research-correlation" role="tabpanel" aria-labelledby="research-tab-correlation" hidden><h1>Saved return correlation</h1><p>Compare how saved price returns move together. This does not predict future returns or guarantee diversification benefits.</p><form id="correlation-form" class="research-controls"><label>Saved assets<input id="correlation-symbols" required placeholder="SPY, QQQ"></label><label>Start date<input id="correlation-start" type="date" required></label><label>End date<input id="correlation-end" type="date" required></label><label>Frequency<select id="correlation-frequency"><option value="daily">Daily</option><option value="weekly">Weekly</option><option value="monthly">Monthly</option></select></label><button id="correlation-run" class="button primary">Calculate correlation</button></form><p id="correlation-status" role="status">Verified saved data is required.</p><div id="correlation-error" class="error-banner" role="alert" hidden></div><div id="correlation-result" hidden><p id="correlation-source"></p><button id="correlation-download" class="button secondary" type="button">Download result JSON</button><div class="research-table"><table id="correlation-table" aria-label="Saved return correlation matrix"></table></div><h3>Sample counts, calculation contract and observed sessions</h3><pre id="correlation-contract"></pre><ul id="correlation-limitations"></ul></div></section>
+        <section id="research-trigger" role="tabpanel" aria-labelledby="research-tab-trigger" hidden>
+          <h2 id="trigger-title">Retrospective event studies</h2>
+          <p>Choose a condition and inspect what happened afterward in saved prices. For example, RSI14 below 30 marks every matching close as a signal hit, not an order. No Backtest review is required for an independent condition.</p>
+          <form id="trigger-form" class="research-controls" novalidate>
+            <label>Condition source<select id="trigger-condition-source"><option value="manual">Independent condition</option><option value="backtest">Reviewed Backtest entry and dates</option></select></label>
+            <label>Condition asset<select id="trigger-symbol" required></select></label>
+            <label>Return target · saved asset<select id="trigger-target-symbol" required></select></label>
+            <fieldset id="trigger-manual-fields" class="criteria-rule"><legend>Independent signal condition</legend><label>Left operand<select id="trigger-left" required></select></label><label>Comparison<select id="trigger-op"><option value="lt">Less than (&lt;)</option><option value="gt">Greater than (&gt;)</option><option value="lte">At most (≤)</option><option value="gte">At least (≥)</option><option value="eq">Equal (=)</option><option value="crosses_above">Crosses above</option><option value="crosses_below">Crosses below</option></select></label><label>Right operand or number<input id="trigger-right" list="criteria-operands" value="30" required></label></fieldset>
+            <label>Start date · saved session<select id="trigger-start" required></select></label><label>End date · saved session<select id="trigger-end" required></select></label>
+            <label>Forward sessions · comma-separated<input id="trigger-horizons" value="1,5,20" placeholder="1,5,20" required aria-describedby="trigger-help"></label>
+            <button id="trigger-run" class="button primary" type="submit" disabled aria-describedby="trigger-disabled-reason">Analyze post-event returns</button>
+          </form>
+          <p id="trigger-disabled-reason" role="status" aria-live="polite"></p>
+          <p id="trigger-input-summary" role="status"></p>
+          <button id="trigger-open-backtest" class="text-button" type="button">Optional: review rules in Backtest</button>
+          <p id="trigger-help" class="muted">Horizons are unique integers from 1 to 60. Every session whose close-based condition is true counts as an event. Target price return runs from the next observed open to the h-th forward session close. h=1 is the next session open-to-close return. Prices after the end date are never used.</p>
+          <p class="source-warning">Retrospective event study, not a tradable strategy backtest. Overlapping windows are not independent samples. No fees, slippage or execution model apply; Backtest cost settings have no effect. This is not dividend total return or evidence of causation.</p>
+          <p id="trigger-status" role="status" aria-live="polite">Set a condition and saved-session dates, then analyze.</p><div id="trigger-error" class="error-banner" role="alert" hidden></div>
+          <section id="trigger-result" hidden aria-label="Retrospective event analysis results">
+            <p id="trigger-source"></p><button id="trigger-download" class="button secondary" type="button">Download result JSON</button>
+            <h3>Summary by horizon</h3><p class="muted">n counts complete outcomes. Mean, median and win rate use complete samples only; win rate is the share of returns above zero. Insufficient forward sessions are marked unavailable, never replaced with zero.</p><div id="trigger-summary" class="research-table"></div>
+            <h3>Results by event</h3><div id="trigger-events" class="research-table"></div>
+            <details><summary>Requested criteria and calculation contract · original JSON</summary><pre id="trigger-contract"></pre></details><ul id="trigger-limitations"></ul>
+          </section>
+        </section>
+        <section id="research-guru" role="tabpanel" aria-labelledby="research-tab-guru" hidden>
+          <div id="guru-browser"><p role="status">Guru reference browser is not loaded. Open Guru to view available public filing references.</p></div>
+        </section>
+      </section>
+      <section id="swarm-view" hidden aria-labelledby="nav-swarm"><div id="swarm-stage"><p role="status">Quant Swarm module is unavailable.</p></div></section>
+      <section id="markets-view" aria-labelledby="market-title">
+        <h1 id="market-title" class="sr-only" tabindex="-1">Real market data workspace</h1>
+        <div id="load-state" data-testid="load-state" data-state="loading" role="status" aria-live="polite" class="status-line">Opening saved market data…</div>
+        <div id="market-error" role="alert" class="error-banner" hidden></div>
+
+        <div class="market-grid" id="market-workspace" aria-busy="true">
+          <aside class="watch-column" aria-label="Watchlist and data scope">
+            <section class="watch-panel">
+              <div class="panel-heading"><h2>Instruments</h2><span id="watch-count" class="muted">0 results</span></div>
+              <div class="list-caption"><span>Symbol / name</span><span>Close</span><span>Archive Δ</span></div>
+              <div id="watchlist" data-testid="watchlist" class="watchlist"></div>
+              <p class="watch-foot">Archive Δ: first-to-last saved close change per asset, not annualized or total return.</p>
+            </section>
+            <section class="observations-panel" aria-labelledby="observations-title"><div class="panel-heading"><h2 id="observations-title">Observations</h2><span id="observation-count" class="muted">0 records</span></div><p class="observation-context" id="observation-context">Select a date to inspect its source.</p><div class="observation-scroll"><table aria-label="Archived observations"><thead><tr><th scope="col">Date</th><th scope="col">Close</th><th scope="col">Volume</th></tr></thead><tbody id="observations-body"></tbody></table></div></section>
+            <div class="scope-note"><button class="text-button" id="scope-sources">Source &amp; limitations ↗</button></div>
+            <details class="sidebar-disclosure"><summary>Instrument details <span id="details-symbol">SPY</span></summary><span id="instrument-mark" hidden>S</span><dl id="instrument-details" class="detail-list"></dl></details>
+          </aside>
+
+          <div class="chart-column">
+            <section class="chart-panel" aria-labelledby="instrument-title">
+              <div class="instrument-heading"><div><span class="document-breadcrumb">Market data /</span><h2 id="instrument-title">SPY</h2><button id="signal-button" data-testid="signal-button" data-status="Unavailable" data-timestamp="" class="signal-button" type="button" aria-expanded="false" aria-controls="signal-details" aria-describedby="signal-selection"><span class="signal-lights" aria-hidden="true"><span class="signal-dot signal-sell"></span><span class="signal-dot signal-buy"></span><span class="signal-dot signal-neutral"></span></span><strong id="signal-status">Unavailable</strong><span class="signal-disclosure" aria-hidden="true">▾</span></button><p id="instrument-name">S&amp;P 500 ETF</p><p id="signal-selection" class="signal-selection">Signal · no selected observation. Last close below is latest.</p></div><span id="snapshot-badge" class="muted">Daily snapshot</span></div>
+              <section id="signal-details" data-testid="signal-details" data-status="Unavailable" data-timestamp="" class="signal-details" aria-labelledby="signal-details-title" hidden>
+                <h3 id="signal-details-title">Technical signal details</h3>
+                <p id="signal-disclaimer">Rule-based technical signal · not personalized advice. Hold means no directional vote, not a trading instruction; Unavailable means a vote is missing. Proposed rules, not validated performance or Investing.com ratings.</p>
+                <p id="signal-availability" role="status">Unavailable · no selected observation loaded.</p>
+                <dl id="signal-identity" class="signal-metadata"></dl>
+                <p id="signal-rule" class="signal-rule"></p>
+                <dl id="signal-counts" class="signal-counts" aria-label="Backend vote counts"></dl>
+                <div id="signal-reasons" class="signal-reasons"></div>
+              </section>
+              <div class="quote-heading"><div class="quote-line"><strong id="last-price" data-testid="last-price">—</strong><span id="quote-currency">· USD</span><span class="quote-label">Last close</span><span class="quote-change"><span id="price-change" class="delta">Unknown</span> <span class="muted">Archive Δ</span></span></div><p id="quote-date" class="muted">No saved observation loaded</p></div>
+              <div class="chart-toolbar"><div class="segmented" role="tablist" aria-label="Market display"><button id="tab-chart" role="tab" aria-selected="true" aria-controls="chart-view" tabindex="0">Chart</button><button id="tab-prices" role="tab" aria-selected="false" aria-controls="prices-view" tabindex="-1">Prices</button></div><div class="periods" role="group" aria-label="Chart period" title="Trailing actual observations: 1M = 21, 3M = 63, 6M = 126, 1Y = 252; Archive = full saved window, not a download option"><button data-period="1M" aria-pressed="false">1M</button><button data-period="3M" aria-pressed="false">3M</button><button data-period="6M" aria-pressed="false">6M</button><button data-period="1Y" aria-pressed="false">1Y</button><button data-period="Archive" aria-pressed="true">Archive</button></div><button id="ask-copilot" class="button secondary" type="button" aria-controls="copilot-panel">Ask Copilot</button></div>
+              <div id="chart-view" role="tabpanel" aria-labelledby="tab-chart">
+                <div class="technical-toolbar" aria-label="Chart controls">
+                  <div class="chart-modes" role="group" aria-label="Price rendering"><button type="button" data-chart-mode="candles" data-testid="chart-mode-candles" aria-pressed="true">Candles</button><button type="button" data-chart-mode="line" data-testid="chart-mode-line" aria-pressed="false">Line</button></div>
+                  <span class="chart-interval" data-testid="chart-interval" title="One provider daily trading-session bar; periods above change only the trailing window, not the interval">Interval <strong>1D</strong></span>
+                  <label><input id="toggle-volume" data-testid="toggle-volume" type="checkbox" checked>Volume</label>
+                  <label class="sma20-key"><input id="toggle-sma20" data-testid="toggle-sma20" type="checkbox" checked>SMA20</label>
+                  <label class="sma50-key"><input id="toggle-sma50" data-testid="toggle-sma50" type="checkbox" checked>SMA50</label>
+                  <label class="rsi14-key"><input id="toggle-rsi14" data-testid="toggle-rsi14" type="checkbox" checked>RSI14</label>
+                </div>
+                <p id="technical-status" data-testid="technical-status" class="technical-status" role="status">Indicators unavailable · no archive loaded.</p>
+                <div id="chart-empty" class="empty-chart"><h3>No archived observations</h3><p>Verify a saved snapshot or select assets to download Yahoo daily prices. No sample prices are substituted.</p><button class="button secondary" id="empty-fetch" data-open-assets aria-label="Open Assets to download market data">Manage assets / download data</button></div><div id="chart-host" hidden><svg id="price-chart" data-testid="price-chart" data-symbol="SPY" data-bars="0" viewBox="0 0 500 390" tabindex="0" role="group" aria-label="Daily OHLC candle, volume and RSI chart" aria-describedby="chart-help technical-status indicator-help"></svg><div id="chart-tooltip" data-testid="chart-tooltip" class="chart-tooltip" role="status" aria-live="off" hidden></div></div>
+              </div>
+              <div id="prices-view" role="tabpanel" aria-labelledby="tab-prices" hidden><div class="table-scroll"><table><caption id="prices-caption">Actual archived OHLCV records</caption><thead><tr><th scope="col">Date</th><th scope="col">Open</th><th scope="col">High</th><th scope="col">Low</th><th scope="col">Close</th><th scope="col">Volume</th></tr></thead><tbody id="prices-body" data-testid="prices-body"><tr><td colspan="6">Loading saved records…</td></tr></tbody></table></div></div>
+              <div class="chart-footer"><span id="price-legend" class="price-legend"><span class="positive">↑ Close &gt; open</span><span class="negative">↓ Close &lt; open</span><span>— Equal / doji</span></span><span id="bar-count">· 0 bars</span><span id="chart-range">No archive loaded</span></div>
+              <p id="chart-help" class="chart-note">Click a date or chart point → inspect source. ← / → select · Esc latest. Hover previews only. Windows use 21 / 63 / 126 bars or the full archive.</p>
+              <details class="indicator-help" id="indicator-help"><summary>Indicator formulas &amp; limits</summary><p>SMA20 / SMA50: arithmetic mean of the last 20 / 50 provider closes, including the current bar; first available at bar 20 / 50. RSI14: 100 − 100 / (1 + average gain / average loss). The backend seeds averages with 14 close-to-close changes (15 bars), then applies Wilder smoothing: (previous average × 13 + current gain or loss) / 14. Flat RSI = 50; no losses = 100; no gains = 0. Guides at 30 / 70 are reference levels, not buy / sell recommendations.</p><p>Backend values use the whole archive for warm-up, including the current bar—not just the visible window. Null values remain gaps (warm-up or unavailable). The browser only plots / formats returned values; it never computes indicators. Basis: provider_close; provider-adjusted prices and an incomplete latest bar can affect interpretation. Switching display or overlays retains selection; a selected date outside a shorter window is remembered while the latest visible bar is shown.</p></details>
+            </section>
+            <section id="technical-summary" data-testid="technical-summary" data-timestamp="" data-symbol="" class="technical-summary" aria-labelledby="technical-summary-title" aria-describedby="technical-summary-footer">
+              <div class="panel-heading"><h2 id="technical-summary-title">Technical indicators</h2><span id="technical-summary-date" class="muted" role="status">No observation loaded</span></div>
+              <section id="signal-vote-summary" class="signal-vote-summary" aria-label="Three backend rule votes" aria-describedby="signal-vote-legend">
+                <p id="signal-vote-availability" class="muted">Unavailable · no validated backend votes.</p>
+                <div id="signal-vote-tiles" class="signal-vote-tiles"></div>
+                <dl id="signal-vote-counts" class="signal-vote-counts" aria-label="Selected backend vote counts"></dl>
+                <p id="signal-vote-legend">Descriptive votes, not execution orders. Hold means no directional vote, not a trading instruction; Unavailable means a vote is missing. The 13 readings below are not additional Buy / Sell votes. Open the signal beside the instrument name for exact reasons.</p>
+              </section>
+              <p class="technical-summary-note">Reference categories: Investing.com KOSPI technicals. Values below describe the selected instrument, not KOSPI. No Investing.com ratings or recommendation counts are reproduced.</p>
+              <div class="technical-table-wrap"><table aria-label="Selected observation technical indicators"><thead><tr><th scope="col">Indicator</th><th scope="col">Value</th><th scope="col">Formula / meaning</th></tr></thead><tbody id="technical-summary-body"></tbody></table></div>
+              <div class="panel-heading"><h3 id="moving-average-title">Moving averages</h3><span class="muted">Actual values · no ratings</span></div>
+              <p class="technical-summary-note">Simple: mean of closes. Exponential: recursively weighted closes. Both use the full archive for warm-up; hover each value for its exact value and calculation.</p>
+              <div class="technical-table-wrap"><table aria-labelledby="moving-average-title"><thead><tr><th scope="col">Period</th><th scope="col">Simple</th><th scope="col">Exponential</th></tr></thead><tbody id="moving-average-body"></tbody></table></div>
+              <p id="technical-summary-footer" class="technical-summary-note">Daily bars · calculated from saved Yahoo OHLCV · not Investing.com values. Periods count valid observations.</p>
+            </section>
+            <section class="ohlc-strip" aria-label="Selected observation OHLCV" id="price-cards"></section>
+            <div class="market-caution"><p>Real saved Yahoo data, not a live feed. Close may be adjusted; latest bar may be incomplete. Historical availability / universe unverified. User-criteria price-return simulation available, not PIT. Orders unavailable.</p></div>
+
+          <details class="details-column" id="selected-evidence" data-testid="selected-evidence" aria-label="Observation evidence">
+            <summary data-testid="evidence-toggle">Evidence <span id="evidence-summary">Selected observation · raw values, indicators &amp; source</span></summary>
+            <section id="evidence-panel" data-testid="evidence-panel" aria-labelledby="evidence-title">
+              <div class="panel-heading"><h2 id="evidence-title" tabindex="-1">Evidence</h2><button id="evidence-copilot" class="text-button" type="button" aria-controls="copilot-panel">Ask Copilot</button><button id="evidence-reset" class="text-button" type="button" disabled>Latest bar</button></div>
+              <div class="evidence-observation"><p id="evidence-state" data-testid="evidence-state" class="muted" role="status" aria-live="polite">No observation loaded</p><h3 id="evidence-date" data-testid="evidence-date"><span id="selected-date" data-testid="selected-date">—</span></h3><p class="muted">Exact stored OHLCV · read-only</p><dl id="evidence-values" data-testid="evidence-values" class="detail-list"></dl></div>
+              <section class="evidence-indicators" data-testid="evidence-indicators" aria-labelledby="indicator-evidence-title"><h3 id="indicator-evidence-title">Derived indicators</h3><p id="evidence-indicator-status" class="muted">Backend values · separate from raw OHLCV</p><dl id="evidence-indicator-values" data-testid="evidence-indicator-values" class="detail-list"></dl><details><summary>Exact returned indicator values</summary><pre id="evidence-indicator-json" data-testid="evidence-indicator-json" tabindex="0">Unavailable</pre></details></section>
+              <div class="evidence-lineage"><h3>Source record</h3><dl class="lineage-list"><div><dt>Archive</dt><dd id="evidence-archive" data-testid="evidence-archive">Unknown</dd></div><div><dt>Raw file</dt><dd id="evidence-file" data-testid="evidence-file">Unknown</dd></div><div><dt>Raw SHA256</dt><dd id="evidence-hash" data-testid="evidence-hash">Unknown</dd></div><div><dt>Provider request</dt><dd id="evidence-source" data-testid="evidence-source">Unknown</dd></div></dl></div>
+              <div class="integrity-body"><span id="integrity-state">Not loaded</span><p id="collected-at">No collection timestamp</p><p class="muted">SHA256 checks saved bytes, not authenticity or an external audit.</p></div>
+              <section class="evidence-preview"><h3>Observation JSON</h3><p class="muted">Backend-normalized record from the raw response.</p><pre id="evidence-json" data-testid="evidence-json" tabindex="0" aria-label="Selected observation JSON">No observation loaded</pre></section>
+              <button class="text-button full-width" id="details-sources">Full source details &amp; limitations ↗</button>
+            </section>
+          </details>
+          </div>
+        </div>
+      </section>
+
+      <footer class="workspace-footer"><span><i class="dot"></i>Real saved market data. Traceable sources.</span><span>Price-return simulation · not PIT <span aria-hidden="true">/</span> No orders</span></footer>
+    </main>
+    <aside id="copilot-panel" class="copilot-body" data-testid="copilot-panel" aria-labelledby="copilot-title">
+      <header class="copilot-header"><h2 id="copilot-title">Ask Copilot</h2></header>
+      <section class="copilot-context" aria-labelledby="copilot-selection-title">
+        <div class="copilot-pin-row"><h3 id="copilot-selection-title"><span class="sr-only">Pinned market data</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 3 6 0-1 6 4 4H6l4-4zM12 13v8"/></svg><strong id="copilot-pinned-label" data-testid="copilot-pinned-label">No observation loaded</strong></h3><button id="copilot-use-selection" data-testid="copilot-use-selection" class="text-button" type="button" hidden disabled>Use current selection</button></div>
+        <p id="copilot-selection-status" data-testid="copilot-selection-status" class="warning" role="status" hidden></p>
+      </section>
+      <div id="copilot-history" data-testid="copilot-history" class="copilot-history" role="region" aria-label="Session questions and answers" tabindex="0">
+        <div id="copilot-empty" data-testid="copilot-empty"><h3>What would you like to understand?</h3><div class="copilot-suggestions"><button type="button" data-copilot-suggestion="Explain the trend and risks through the pinned date using price, volume, SMA20/SMA50 and RSI14. Separate observations from interpretation and cite source IDs.">Explain trend &amp; risk</button><button type="button" data-copilot-suggestion="What can this saved data tell me, and what cannot it establish? Cite source IDs and identify the additional evidence needed.">What evidence is missing?</button></div></div>
+        <div id="copilot-transcript" data-testid="copilot-transcript"></div>
+        <section id="copilot-result" data-testid="copilot-result" aria-labelledby="copilot-result-title" hidden><h3 id="copilot-result-title" class="sr-only">Copilot</h3><p id="copilot-result-source" class="copilot-message-source"></p><p id="copilot-result-question" class="copilot-message-question"></p><p id="copilot-result-selection" class="warning" hidden></p><div id="copilot-answer" class="copilot-message-answer" tabindex="0" aria-label="Copilot answer"></div><details><summary>Answer source &amp; usage</summary><dl id="copilot-result-identity" class="lineage-list"></dl><h3>Provider-reported usage · this answer</h3><dl id="copilot-usage" class="detail-list"></dl><p class="muted">Missing usage or cost is unknown, not zero. Tokens are not an account-allowance or billing estimate. Review claims against cited evidence; no orders or personal investment advice.</p></details></section>
+      </div>
+      <form id="copilot-form" data-testid="copilot-composer">
+        <label for="copilot-question" class="sr-only">Your question</label><textarea id="copilot-question" rows="3" maxlength="4000" required placeholder="Ask about this evidence, in any language…"></textarea>
+        <div class="copilot-actions"><button id="copilot-analyze" class="button primary" type="submit" disabled>Send</button><span id="copilot-progress" role="status" aria-live="polite"></span></div>
+        <div id="copilot-error" class="error-banner" role="alert" hidden></div>
+      </form>
+    </aside>
+  </div>
+
+  <dialog id="settings-dialog" aria-labelledby="settings-title">
+    <div class="drawer-header"><h2 id="settings-title">Settings</h2><button id="close-settings" class="icon-button" type="button" aria-label="Close settings" autofocus><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg></button></div>
+    <div class="drawer-body">
+      <div id="settings-error" class="error-banner" role="alert" hidden></div>
+      <details id="copilot-settings" data-testid="copilot-settings" class="copilot-settings" open><summary>Connection, model &amp; source details <span id="copilot-connection-label">Not checked</span></summary>
+        <div class="copilot-actions"><button id="copilot-check" class="button secondary" type="button">Check connection</button><span id="copilot-connection" role="status">Not checked · no SDK request made</span></div><p class="muted">Checks account authentication and model metadata only—not successful inference. Uses your existing Copilot login; no keys requested here.</p>
+        <details id="copilot-account"><summary>Current account details</summary><dl id="copilot-account-values" class="detail-list"><div><dt>Account metadata</dt><dd>Not checked</dd></div></dl><p class="muted">Visibility only; opening this section makes no external calls and does not switch accounts.</p></details>
+        <label for="copilot-model">Model</label><select id="copilot-model" form="copilot-form" required disabled><option value="">Check connection to load models</option></select>
+        <details><summary>SDK usage at last connection check</summary><dl id="copilot-connection-usage" class="detail-list"><div><dt>Provider-reported usage</dt><dd>Unknown</dd></div></dl></details>
+        <details><summary>Pinned archive &amp; sharing scope</summary><dl id="copilot-identity" class="lineage-list"></dl><p id="copilot-scope" class="muted">Saved Yahoo bars and aligned SMA20/SMA50/RSI14 from archive start through the pinned date. No later bars, other symbols, workspace files or web/news search. Each question is independent; earlier replies are not sent. History stays on this page until reload.</p><p id="copilot-sharing" class="sharing-notice">Send shares pinned public saved data and your question with GitHub Copilot. Do not include secrets.</p></details>
+        <details id="copilot-handoff"><summary>Manual handoff to a coding agent</summary><p class="muted">Read-only public CLI prompt for this pinned selection. Select, copy manually, then choose whether to paste/send in your agent host. Selection makes no clipboard writes or external calls; your host’s sharing policy applies.</p><label for="copilot-handoff-prompt">Pinned archive lookup prompt</label><textarea id="copilot-handoff-prompt" rows="8" readonly></textarea><button id="copilot-select-prompt" class="button secondary" type="button" disabled>Select prompt</button></details>
+      </details>
+    </div>
+  </dialog>
+
+  <dialog id="source-dialog" aria-labelledby="source-title"><div class="drawer-header"><div><p class="eyebrow">DATA LINEAGE</p><h2 id="source-title">Sources &amp; provenance</h2></div><button id="close-sources" class="icon-button" aria-label="Close sources"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg></button></div><div class="drawer-body"><div class="source-warning">A local hash is an integrity check, not an external audit. A current snapshot does not prove what was available at a past decision time.</div><div id="source-content" data-testid="source-content"></div></div></dialog>
+  <noscript><p class="error-banner">JavaScript is required for this workstation. No market data has been fetched.</p></noscript>
+</body>
+</html>

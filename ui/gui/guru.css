@@ -1,0 +1,100 @@
+/* Scoped dashboard styles. Theme tokens and light/dark selection come from the
+ * host stylesheet, including its user-approved non-rose accent override. */
+.itt-guru { color: var(--cp-text); background: var(--cp-bg); font: 13px/1.5 "Segoe UI", Aptos, Calibri, -apple-system, BlinkMacSystemFont, sans-serif; padding: 6px 16px; min-width: 0; }
+.itt-guru [hidden], .itt-guru[hidden] { display: none !important; }
+.itt-guru * { box-sizing: border-box; }
+.itt-guru h2 { font-size: 20px; margin: 0; }
+.itt-guru h3 { font-size: 15px; margin: 0 0 6px; }
+.itt-guru p { margin: 4px 0; }
+.guru-header { display: flex; flex-wrap: wrap; gap: 6px 16px; align-items: center; margin-bottom: 4px; }
+.guru-header > :last-child { margin-left: auto; }
+.guru-header h2 { font-size: 18px; white-space: nowrap; }
+.guru-muted, .guru-provenance { color: var(--cp-text-muted); }
+.guru-warning { color: var(--cp-warning); border-left: 3px solid var(--cp-warning); padding: 4px 8px; background: var(--cp-surface); border-radius: 0.625rem; font-size: 12px; }
+.guru-error, .guru-negative { color: var(--cp-danger); }
+.guru-positive { color: var(--cp-success); }
+.itt-guru button, .itt-guru input, .itt-guru select { font: inherit; color: var(--cp-text); background: var(--cp-surface); border: 1px solid var(--cp-border); border-radius: 0.625rem; padding: 5px 10px; min-height: 32px; }
+.itt-guru button { cursor: pointer; }
+.itt-guru button:hover:not(:disabled) { background: var(--cp-accent-soft); border-color: var(--cp-accent); }
+.itt-guru button:disabled { cursor: default; opacity: .5; }
+.itt-guru :focus-visible { outline: 2px solid var(--cp-accent); outline-offset: 3px; }
+.itt-guru a { color: var(--cp-link); overflow-wrap: anywhere; }
+.guru-navigation { display: flex; gap: 4px 12px; align-items: center; margin: 4px 0; }
+.guru-navigation .guru-warning { flex: 1; margin: 0; }
+.guru-tabs { display: flex; flex-wrap: wrap; gap: 4px; }
+.itt-guru .guru-tabs [aria-selected="true"], .itt-guru .guru-tabs [aria-selected="true"]:hover { color: var(--cp-accent-fg); background: var(--cp-accent); border-color: var(--cp-accent); }
+.guru-status { color: var(--cp-text-muted); font-size: 12px; margin-left: auto !important; }
+.guru-controls { display: flex; flex-wrap: wrap; align-items: end; gap: 6px 10px; margin: 4px 0; }
+.guru-field { display: flex; flex: 0 1 auto; flex-direction: column; gap: 2px; font-size: 12px; color: var(--cp-text-muted); min-width: 0; max-width: 100%; }
+.guru-field input, .guru-field select { min-width: 0; max-width: 100%; width: 100%; }
+.guru-controls .guru-field:has(#guru-detail-fund), .guru-controls .guru-field:has(#guru-change-fund) { flex: 0 1 300px; }
+.guru-search { flex: 1 1 190px; min-width: min(170px, 100%); max-width: 360px; }
+.guru-check { display: flex; gap: 6px; align-items: center; min-height: 32px; font-size: 12px; }
+.guru-check input { accent-color: var(--cp-accent); min-height: auto; }
+.guru-summary { padding: 2px 8px; background: var(--cp-surface); border: 1px solid var(--cp-border); border-radius: 0.625rem; margin-bottom: 4px !important; font-size: 12px; }
+.guru-table-section { margin: 6px 0; min-width: 0; }
+.guru-table-section > .guru-search { margin-bottom: 6px; }
+.guru-table-scroll { overflow: auto; max-height: max(320px, calc(100dvh - 260px)); border: 1px solid var(--cp-border); border-radius: 0.625rem; background: var(--cp-surface); }
+.itt-guru table { width: 100%; border-collapse: separate; border-spacing: 0; font-size: 12px; text-align: left; white-space: normal; }
+.itt-guru caption { text-align: left; padding: 6px 8px; color: var(--cp-text-muted); background: var(--cp-surface-soft); }
+.itt-guru th { position: sticky; top: 0; z-index: 1; background: var(--cp-surface-soft); }
+.itt-guru th, .itt-guru td { border-bottom: 1px solid var(--cp-border); padding: 4px 8px; vertical-align: top; text-align: left; }
+.itt-guru th { padding-block: 2px; }
+.itt-guru td { font-variant-numeric: tabular-nums; text-align: left; overflow-wrap: anywhere; }
+.itt-guru .guru-number { white-space: nowrap; text-align: right; overflow-wrap: normal; }
+.itt-guru td small, .itt-guru td strong { display: block; }
+.itt-guru td small { font-size: 12px; margin-top: 2px; }
+.itt-guru th button { border: none; background: var(--cp-transparent); padding: 2px 0; min-height: 24px; text-align: left; font-weight: 600; font-size: 12px; line-height: 1.3; white-space: normal; border-radius: 0; }
+/* Keep all nine overview columns. Space belongs to names/coverage, not a
+ * universal cell minimum or unbroken repeated annualized header labels. */
+#guru-funds-table { table-layout: fixed; min-width: 1100px; }
+.guru-table-scroll { position: relative; }
+.itt-guru caption { position: absolute; width: 1px; height: 1px; padding: 0; overflow: hidden; clip-path: inset(50%); }
+#guru-funds-table [data-column="manager"] { width: 13%; }
+#guru-funds-table [data-column="name"] { width: 13%; }
+#guru-funds-table [data-column="range"] { width: 15%; }
+#guru-funds-table [data-column="ytd"] { width: 6%; }
+#guru-funds-table [data-column="1y"] { width: 7%; }
+#guru-funds-table [data-column="3y"], #guru-funds-table [data-column="5y"] { width: 8%; }
+#guru-funds-table [data-column="since"] { width: 12%; }
+#guru-funds-table [data-column="reliability"] { width: 18%; }
+#guru-funds-table [data-column="range"] > span { display: block; max-width: 150px; }
+.itt-guru table:not(#guru-funds-table) { min-width: 760px; }
+#guru-changes-table { min-width: 1040px; }
+.itt-guru th[aria-sort="ascending"] button::after { content: " ↑"; color: var(--cp-accent); }
+.itt-guru th[aria-sort="descending"] button::after { content: " ↓"; color: var(--cp-accent); }
+.itt-guru tbody tr:hover { background: var(--cp-accent-soft); }
+.itt-guru .guru-clickable-row { cursor: pointer; }
+.itt-guru .guru-fund-link { color: var(--cp-link); background: var(--cp-transparent); border: 0; padding: 0; text-align: left; font-weight: 600; }
+.guru-pagination { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; padding-top: 4px; font-size: 12px; }
+.guru-pagination .guru-field { flex-direction: row; align-items: center; gap: 6px; margin-left: auto; white-space: nowrap; }
+.guru-pagination .guru-field select { width: auto; }
+.guru-secondary { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 12px; }
+#guru-detail-summary { display: flex; flex-wrap: wrap; gap: 0 16px; }
+.guru-performance, .guru-holdings-bars { min-width: 0; background: var(--cp-surface); border: 1px solid var(--cp-border); border-radius: 10px; padding: 12px; margin: 6px 0; }
+.guru-metrics { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0; }
+.guru-metrics > div { flex: 1; min-width: 100px; padding: 8px; background: var(--cp-surface-soft); border-radius: 0.625rem; }
+.guru-metrics dt { color: var(--cp-text-muted); font-size: 12px; }
+.guru-metrics dd { font-size: 18px; font-variant-numeric: tabular-nums; margin: 4px 0 0; }
+.guru-bar-row { display: grid; grid-template-columns: minmax(100px, 1fr) 2fr; align-items: center; gap: 16px; margin-top: 8px; }
+.guru-bar-row meter { width: 100%; height: 18px; accent-color: var(--cp-accent); }
+.guru-bar-row meter::-webkit-meter-bar { background: var(--cp-surface-soft); border: none; }
+.guru-bar-row meter::-webkit-meter-optimum-value { background: var(--cp-accent); }
+.itt-guru details { border: 1px solid var(--cp-border); background: var(--cp-surface); border-radius: 0.625rem; padding: 8px; margin: 8px 0; }
+.itt-guru summary { cursor: pointer; font-weight: 600; }
+.guru-provenance { font-size: 12px; border-top: 1px solid var(--cp-border); padding-top: 4px; margin-top: 6px; overflow-wrap: anywhere; }
+.guru-provenance details p { margin-top: 8px; }
+@media (min-width: 700px) {
+  .guru-controls .guru-field { flex-direction: row; align-items: center; gap: 6px; white-space: nowrap; }
+  .guru-controls .guru-field input, .guru-controls .guru-field select { width: auto; flex: 1; }
+  .guru-controls .guru-search { flex-basis: 270px; max-width: 390px; }
+}
+@media (max-width: 640px) {
+  .itt-guru { padding: 12px; }
+  .guru-header { align-items: start; }
+  .guru-field { width: 100%; }
+  .guru-pagination .guru-field { width: auto; margin-left: 0; }
+  .guru-tabs button { flex: 1 1 40%; }
+  .guru-secondary { grid-template-columns: minmax(0, 1fr); }
+  .guru-bar-row { gap: 8px; }
+}

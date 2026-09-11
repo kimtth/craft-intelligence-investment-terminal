@@ -1,0 +1,61 @@
+{
+  "schema_version": "0.1",
+  "kind": "synthetic",
+  "source": "Hand arithmetic from docs/08-data-contract.md; no engine-generated expectations.",
+  "tolerance": "0.00000001",
+  "normal": {
+    "strategy": {
+      "daily": [
+        {"date": "2024-01-02", "cash": "1000", "positions": {}, "receivables": "0", "nav": "1000"},
+        {"date": "2024-01-03", "cash": "91", "positions": {"SYN-A": 5, "SYN-B": 4}, "receivables": "0", "nav": "991"},
+        {"date": "2024-01-04", "cash": "190", "positions": {"SYN-A": 4, "SYN-B": 4}, "receivables": "0", "nav": "990"},
+        {"date": "2024-01-05", "cash": "190", "positions": {"SYN-A": 4, "SYN-B": 4}, "receivables": "0", "nav": "990"},
+        {"date": "2024-01-08", "cash": "190", "positions": {"SYN-A": 4, "SYN-B": 4}, "receivables": "0", "nav": "990"}
+      ],
+      "fills": [
+        {"date": "2024-01-03", "asset_id": "SYN-A", "side": "buy", "quantity": 5, "requested_quantity": 5, "raw_price": "100", "price": "100", "notional": "500", "fee": "5", "slippage": "0", "cash_after": "495", "position_after": 5},
+        {"date": "2024-01-03", "asset_id": "SYN-B", "side": "buy", "quantity": 4, "requested_quantity": 5, "raw_price": "100", "price": "100", "notional": "400", "fee": "4", "slippage": "0", "cash_after": "91", "position_after": 4},
+        {"date": "2024-01-04", "asset_id": "SYN-A", "side": "sell", "quantity": 1, "requested_quantity": 1, "raw_price": "100", "price": "100", "notional": "100", "fee": "1", "slippage": "0", "cash_after": "190", "position_after": 4}
+      ],
+      "metrics": {"initial_nav": "1000", "final_nav": "990", "total_return": "-0.01", "max_drawdown": "0.01", "turnover": "1", "traded_notional": "1000", "fees": "10", "slippage": "0", "total_costs": "10"}
+    },
+    "benchmark": {
+      "daily": [
+        {"date": "2024-01-02", "cash": "1000", "positions": {}, "receivables": "0", "nav": "1000"},
+        {"date": "2024-01-03", "cash": "91", "positions": {"SYN-A": 5, "SYN-B": 4}, "receivables": "0", "nav": "991"},
+        {"date": "2024-01-04", "cash": "91", "positions": {"SYN-A": 5, "SYN-B": 4}, "receivables": "0", "nav": "991"},
+        {"date": "2024-01-05", "cash": "91", "positions": {"SYN-A": 5, "SYN-B": 4}, "receivables": "0", "nav": "991"},
+        {"date": "2024-01-08", "cash": "91", "positions": {"SYN-A": 5, "SYN-B": 4}, "receivables": "0", "nav": "991"}
+      ],
+      "fills": [
+        {"date": "2024-01-03", "asset_id": "SYN-A", "side": "buy", "quantity": 5, "requested_quantity": 5, "raw_price": "100", "price": "100", "notional": "500", "fee": "5", "slippage": "0", "cash_after": "495", "position_after": 5},
+        {"date": "2024-01-03", "asset_id": "SYN-B", "side": "buy", "quantity": 4, "requested_quantity": 5, "raw_price": "100", "price": "100", "notional": "400", "fee": "4", "slippage": "0", "cash_after": "91", "position_after": 4}
+      ],
+      "metrics": {"initial_nav": "1000", "final_nav": "991", "total_return": "-0.009", "max_drawdown": "0.009", "turnover": "0.9", "traded_notional": "900", "fees": "9", "slippage": "0", "total_costs": "9"}
+    }
+  },
+  "gap": {
+    "targets": {"SYN-A": 5, "SYN-B": 5},
+    "daily": {"date": "2024-01-03", "cash": "91", "positions": {"SYN-A": 4, "SYN-B": 1}, "receivables": "0", "nav": "991"},
+    "fills": [
+      {"date": "2024-01-03", "asset_id": "SYN-A", "side": "buy", "quantity": 4, "requested_quantity": 5, "raw_price": "200", "price": "200", "notional": "800", "fee": "8", "slippage": "0", "cash_after": "192", "position_after": 4},
+      {"date": "2024-01-03", "asset_id": "SYN-B", "side": "buy", "quantity": 1, "requested_quantity": 5, "raw_price": "100", "price": "100", "notional": "100", "fee": "1", "slippage": "0", "cash_after": "91", "position_after": 1}
+    ]
+  },
+  "fee_and_slippage": {
+    "fills": [
+      {"date": "2024-01-03", "asset_id": "SYN-A", "side": "buy", "quantity": 5, "requested_quantity": 5, "raw_price": "100", "price": "101", "notional": "505", "fee": "5.05", "slippage": "5", "cash_after": "489.95", "position_after": 5},
+      {"date": "2024-01-03", "asset_id": "SYN-B", "side": "buy", "quantity": 4, "requested_quantity": 5, "raw_price": "100", "price": "101", "notional": "404", "fee": "4.04", "slippage": "4", "cash_after": "81.91", "position_after": 4},
+      {"date": "2024-01-04", "asset_id": "SYN-A", "side": "sell", "quantity": 1, "requested_quantity": 1, "raw_price": "100", "price": "99", "notional": "99", "fee": "0.99", "slippage": "1", "cash_after": "179.92", "position_after": 4}
+    ],
+    "metrics": {"final_nav": "979.92", "total_return": "-0.02008", "max_drawdown": "0.02008", "turnover": "1.008", "fees": "10.08", "slippage": "10", "total_costs": "20.08"}
+  },
+  "actions": {
+    "before": {"date": "2024-01-03", "positions": {"SYN-A": 5}, "cash": "500", "receivables": "0", "nav": "1000"},
+    "split": {"date": "2024-01-04", "positions": {"SYN-A": 10}, "cash": "500", "receivables": "0", "nav": "1000"},
+    "dividend": {"date": "2024-01-04", "positions": {"SYN-A": 5}, "cash": "500", "receivables": "10", "nav": "1000"},
+    "dividend_paid": {"date": "2024-01-08", "positions": {"SYN-A": 5}, "cash": "510", "receivables": "0", "nav": "1000"},
+    "delist": {"date": "2024-01-04", "positions": {}, "cash": "500", "receivables": "100", "nav": "600"},
+    "delist_paid": {"date": "2024-01-08", "positions": {}, "cash": "600", "receivables": "0", "nav": "600"}
+  }
+}

@@ -1,0 +1,49 @@
+{
+  "schema_version": "0.1",
+  "kind": "synthetic",
+  "source": "docs/08-data-contract.md: independent answers",
+  "scope": "Independent hand arithmetic only; not an engine run or engine verification.",
+  "precision": 28,
+  "tolerance": "0.00000001",
+  "sessions": ["2024-01-02", "2024-01-03", "2024-01-04", "2024-01-05", "2024-01-08"],
+  "cost_shared_cash": {
+    "input": {"initial_cash": "1000", "weight_a": "0.5", "weight_b": "0.5", "signal_close_a": "100", "signal_close_b": "100", "open_a": "100", "open_b": "100", "close_a": "100", "close_b": "100", "fee_rate": "0.01", "quantity_step": "1"},
+    "expected": {"target_a": "5", "target_b": "5", "quantity_a": "5", "quantity_b": "4", "fee_a": "5", "fee_b": "4", "cash": "91", "nav": "991", "actual_weight_a_numerator": "500", "actual_weight_b_numerator": "400", "actual_weight_denominator": "991"}
+  },
+  "gap_up": {
+    "input": {"initial_cash": "1000", "weight_a": "0.5", "weight_b": "0.5", "signal_close_a": "100", "signal_close_b": "100", "open_a": "200", "open_b": "100", "close_a": "200", "close_b": "100", "fee_rate": "0.01", "quantity_step": "1"},
+    "expected": {"target_a": "5", "target_b": "5", "quantity_a": "4", "quantity_b": "1", "fee_a": "8", "fee_b": "1", "cash": "91", "nav": "991"}
+  },
+  "split": {
+    "input": {"quantity": "5", "price_before": "100", "cash": "500", "ratio": "2", "price_after": "50"},
+    "expected": {"quantity": "10", "cash": "500", "nav": "1000"}
+  },
+  "dividend": {
+    "input": {"eligible_quantity": "5", "cash": "500", "cash_per_share": "2", "ex_date_close": "98"},
+    "expected": {"cash_before_payment": "500", "receivable_before_payment": "10", "nav_before_payment": "1000", "cash_after_payment": "510", "receivable_after_payment": "0", "nav_after_payment": "1000", "same_day_new_buy_entitlement": "0"}
+  },
+  "delist": {
+    "input": {"quantity": "5", "price_before": "100", "cash": "500", "cash_per_share": "20", "initial_nav": "1000", "running_peak": "1000"},
+    "expected": {"quantity": "0", "receivable": "100", "nav": "600", "cash_after_payment": "600", "total_return": "-0.4", "max_drawdown": "0.4"}
+  },
+  "unknown_delist": {
+    "missing_fields": ["cash_per_share", "pay_at"],
+    "expected": "reject; neither zero nor the last price is a settlement fallback"
+  },
+  "pit_revision": {
+    "observed_at": "2024-01-02T21:00:00Z",
+    "revision_1_available_at": "2024-01-02T21:00:00Z",
+    "revision_1_value": "100",
+    "revision_2_available_at": "2024-01-05T21:05:00Z",
+    "revision_2_value": "999",
+    "expected_before": "100",
+    "expected_after": "999"
+  },
+  "future_entry": {
+    "asset_id": "SYN-C",
+    "effective_at": "2024-01-05T14:30:00Z",
+    "available_at": "2024-01-05T14:30:00Z",
+    "cutoff": "2024-01-03T21:00:00Z",
+    "expected_members": ["SYN-A", "SYN-B"]
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "schema_version": "0.1",
+  "dataset_id": "p2-synthetic-normal",
+  "universe_id": "p2-synthetic-universe",
+  "start": "2024-01-02",
+  "end": "2024-01-08",
+  "initial_cash": "1000",
+  "allocation": "equal",
+  "weights": {},
+  "rebalance_every": 1,
+  "lookback": 0,
+  "fee_rate": "0.01",
+  "slippage_rate": "0",
+  "quantity_step": "1",
+  "benchmark": "equal_weight_buy_and_hold",
+  "execution": "next_open",
+  "valuation": "raw_close"
+}

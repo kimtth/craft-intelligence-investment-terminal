@@ -1,0 +1,12 @@
+{
+  "archive_id": "6e631bd3-c254-4e9d-981b-ce3324fdeea9",
+  "weights": {"SPY": "0.4", "QQQ": "0.4", "IWM": "0.2"},
+  "rebalance_every": 5,
+  "start": "2025-09-10",
+  "end": "2026-09-09",
+  "initial_cash": "10000",
+  "fee_bps": "10",
+  "slippage_bps": "10",
+  "entry": {"left": "close", "op": "gt", "right": "sma20"},
+  "exit": {"left": "close", "op": "lt", "right": "sma20"}
+}

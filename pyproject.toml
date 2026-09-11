@@ -1,0 +1,33 @@
+[project]
+name = "intelligent-trading-terminal"
+version = "0.1.0"
+description = "Synthetic-first, auditable investment research contracts"
+requires-python = ">=3.13"
+dependencies = ["pydantic>=2.11,<3"]
+
+[project.scripts]
+itt = "itt.cli:main"
+
+[build-system]
+requires = ["hatchling>=1.27,<2"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/itt"]
+
+[dependency-groups]
+dev = [
+    "imageio-ffmpeg>=0.6.0",
+    "pytest>=8.4,<9",
+    "ruff>=0.12,<1",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py313"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]
