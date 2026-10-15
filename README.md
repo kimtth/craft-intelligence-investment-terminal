@@ -74,15 +74,6 @@ flowchart TD
 
 See [Architecture](docs/03-architecture.md) for the full breakdown.
 
-## Proposed access and pricing
-
-| Tier | Included capabilities | Proposed price |
-|---|---|---|
-| **Free** | Trend analysis and portfolio management, including static and dynamic allocation | **$0** |
-| **Pro** | AI-driven chat and Quant Swarm | **Usage-based credits: 1 credit = US$1** |
-
-These are proposed commercial terms, not implemented billing. Credits are intended to be consumed according to AI usage; one credit does not imply one chat request or one Swarm run, and per-task consumption remains unspecified.
-
 ## Intended benefits
 
 The intended return is research productivity and better-informed decisions, not a promise of higher investment returns:

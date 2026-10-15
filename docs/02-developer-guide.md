@@ -14,12 +14,23 @@ When environment setup is within the task scope, run these commands in order fro
 
 ```powershell
 $env:UV_PROJECT_ENVIRONMENT = '.venv'
-uv sync --locked --group dev
-pnpm --dir ui install --frozen-lockfile --ignore-scripts
+uv sync --group dev --default-index https://pypi.org/simple
+pnpm --dir ui install --no-frozen-lockfile --ignore-scripts --registry=https://registry.npmjs.org/
 node ui/node_modules/electron/install.js
 ```
 
-The first two lines prepare the repository's sole Python environment, `.venv`, including development tools from [pyproject.toml](../pyproject.toml). It replaces the former rewrite environment; historical reports retain their original paths. If a running editor tool locks an executable, leave that process intact and complete synchronization after its owner releases it. The remaining commands install the locked packages from [ui/package.json](../ui/package.json) and the Electron executable.
+The first two lines prepare the repository's sole Python environment, `.venv`, including development tools from [pyproject.toml](../pyproject.toml). It replaces the former rewrite environment; historical reports retain their original paths. If a running editor tool locks an executable, leave that process intact and complete synchronization after its owner releases it. The remaining commands install packages from [ui/package.json](../ui/package.json) and the Electron executable.
+
+Python and UI dependencies default to public PyPI and npm registries, configured in
+[pyproject.toml](../pyproject.toml) and [ui/.npmrc](../ui/.npmrc). Python and pnpm lockfiles
+are generated locally and ignored because they can contain workstation-specific package-feed
+URLs. Fresh checkouts resolve manifest constraints rather than a shared locked dependency graph;
+exact versions can differ between installations. Do not force-add local locks or commit
+organization-specific mirrors or credentials. Ignoring files does not remove them from earlier
+Git history.
+The setup commands explicitly select public registries because workstation environment settings
+can override project defaults. Organizations may require approved mirrors instead; keep any
+resulting lockfiles local.
 
 `pnpm start` launches the desktop; `pnpm start:web` launches the local web UI. This is a repository-backed application requiring its dedicated Python environment, not a standalone installer. The backend does not automatically switch to another Python. Double-click launch through [Start-ITT.cmd](../Start-ITT.cmd) and the full install-to-shutdown flow on a fresh environment require separate verification.
 
@@ -60,6 +71,11 @@ Square brackets mark optional arguments. Replace `PATH`, `DATA`, `SPEC` and `ID`
 | `market guru --spec PATH` | Analyze holdings, common securities and quantity changes in user-normalized filings. |
 
 The default market store is `.itt/market`. Collection accepts symbols matching `[A-Z][A-Z0-9.-]{0,9}`, uses `interval=1d`, and accepts USD only. A valid symbol or date range does not guarantee provider coverage. Failed reads never trigger collection, another archive or substitute assets. Analysis results are returned, not saved as synthetic research bundles.
+
+Each Yahoo response is limited to 8 MiB before JSON parsing or archival, with the existing
+30-second socket timeout. Oversized responses fail with the standard sanitized collection
+error and leave the previous archive pointer unchanged; there is no automatic retry or
+partial publication. The socket timeout is not an overall download deadline.
 
 ### Explicit download date contract
 

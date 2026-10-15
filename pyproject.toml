@@ -22,6 +22,10 @@ dev = [
     "ruff>=0.12,<1",
 ]
 
+[[tool.uv.index]]
+url = "https://pypi.org/simple"
+default = true
+
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 

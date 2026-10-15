@@ -30,6 +30,7 @@ from itt.signals import signals
 _SYMBOL = re.compile(r"[A-Z][A-Z0-9.-]{0,9}")
 _HASH = re.compile(r"[0-9a-f]{64}")
 _FIELDS = ("open", "high", "low", "close", "volume")
+_MAX_RESPONSE_BYTES = 8 * 1024 * 1024
 _ERRORS = (
     OSError, ValueError, TypeError, KeyError, IndexError, ArithmeticError,
     HTTPException, RecursionError,
@@ -299,7 +300,9 @@ def fetch_market(symbols: list[str], root: Path = Path(".itt/market"), *,
             with urllib.request.urlopen(request, timeout=30) as response:
                 if response.status != 200:
                     raise ValueError("provider HTTP failure")
-                raw = response.read()
+                raw = response.read(_MAX_RESPONSE_BYTES + 1)
+                if len(raw) > _MAX_RESPONSE_BYTES:
+                    raise ValueError("provider response too large")
             normalized.append(_normalize(symbol, raw, bounds))
             payloads[f"raw-{symbol}.json"] = raw
         archive_id = _uuid(str(uuid4()))

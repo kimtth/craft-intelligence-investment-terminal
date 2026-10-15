@@ -86,6 +86,47 @@ class Reply(BytesIO):
     status = 200
 
 
+@pytest.mark.parametrize("overflow", [1, 1024])
+def test_fetch_response_size_limit(tmp_path, mock_http, monkeypatch, overflow):
+    limit = 1024
+    raw = encode(response())
+    assert len(raw) < limit
+    monkeypatch.setattr(market, "_MAX_RESPONSE_BYTES", limit)
+    mock_http({"SPY": raw + b" " * (limit - len(raw))})
+    root = tmp_path / "market"
+    snapshot = market.fetch_market(["SPY"], root)
+    assert (root / snapshot["manifest"]["id"] / "raw-SPY.json").stat().st_size == limit
+    before = (root / "latest.json").read_bytes()
+    entries = set(root.iterdir())
+    qqq = encode(response("QQQ"))
+    mock_http({"SPY": raw, "QQQ": qqq + b" " * (limit + overflow - len(qqq))})
+    with pytest.raises(ValueError, match="^unable to fetch market data$"):
+        market.fetch_market(["SPY", "QQQ"], root)
+    assert (root / "latest.json").read_bytes() == before
+    assert set(root.iterdir()) == entries
+
+
+def test_fetch_never_reads_an_unbounded_response(tmp_path, monkeypatch):
+    limit = 8 * 1024 * 1024
+    assert market._MAX_RESPONSE_BYTES == limit
+    reads = []
+
+    class OversizedReply(Reply):
+        def read(self, size=-1):
+            reads.append(size)
+            assert size == limit + 1
+            return b" " * size
+
+    reply = OversizedReply()
+    monkeypatch.setattr(market.urllib.request, "urlopen", lambda *a, **kw: reply)
+    root = tmp_path / "market"
+    with pytest.raises(ValueError, match="^unable to fetch market data$"):
+        market.fetch_market(["SPY"], root)
+    assert reads == [limit + 1]
+    assert reply.closed
+    assert not root.exists()
+
+
 @pytest.fixture(autouse=True)
 def no_network(monkeypatch):
     def forbidden(*args, **kwargs):
