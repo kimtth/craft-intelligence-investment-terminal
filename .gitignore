@@ -20,6 +20,10 @@ ref-app/
 research-runs/
 *.log
 
+# Local dependency locks can contain workstation-specific package-feed URLs.
+uv.lock
+pnpm-lock.yaml
+
 # Root Markdown stays local, except README. Nested docs remain eligible for tracking.
 /*.[mM][dD]
 !/[rR][eE][aA][dD][mM][eE].[mM][dD]
